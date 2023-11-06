@@ -10,6 +10,10 @@
     $registryPath = "HKLM:\SOFTWARE\Microsoft\DeviceManageabilityCSP"
     Remove-Item $registryPath -Force
 
+    #Remove Start Menu Item
+    $startmenuPath = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Configuration Manager\Configuration Manager\Software Center.lnk"
+    Remove-Item = $startmenuPath -Force
+
     #Sysprep Variables
     $sysprepPath = "c:\windows\system32\sysprep"
     $sysprepName = "sysprep.exe"
