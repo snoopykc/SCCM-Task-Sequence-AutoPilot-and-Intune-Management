@@ -1,20 +1,20 @@
-﻿Get-Module Microsoft.Graph.DeviceManagement
 $Tenant = ""
 $clientid = ""
-$clientSecret = ""
+$clientSecret = ""  
 $teamsURI = ''
 $alerts = $true
+$scope = "https://graph.microsoft.com/.default" 
 
-Try{
+Try {
     $serial = (Get-CimInstance win32_bios).SerialNumber
+ 
+    $secureClientSecret = ConvertTo-SecureString $clientSecret -AsPlainText -Force
 
-    $username = "$clientid"
-    $password = "$clientSecret"
-    $secstr = New-Object -TypeName System.Security.SecureString
-    $password.ToCharArray() | ForEach-Object {$secstr.AppendChar($_)}
-    $cred = new-object -typename System.Management.Automation.PSCredential -argumentlist $username, $secstr
+    $token = Get-MsalToken -ClientId $clientid -TenantId $Tenant -ClientSecret $secureClientSecret -Scopes $scope
 
-    Connect-MGGraph -TenantId $Tenant -ClientSecretCredential $cred
+    $secureAccessToken = ConvertTo-SecureString $token.AccessToken -AsPlainText -Force
+
+    Connect-MgGraph -AccessToken $secureAccessToken
 
     $managedDeviceId = Get-MgDeviceManagementManagedDevice -Filter "serialNumber eq '$serial'" | Select-Object -ExpandProperty Id
     Remove-MgDeviceManagementManagedDevice -ManagedDeviceId $managedDeviceId
